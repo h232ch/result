@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- 타임리프를 th 지시어로 사용할 수 있게함 -->
+<head>
+    <meta charset="UTF-8">
+    <title>Study Management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <style>
+        .container {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand" href="/" th:href="@{/}">
+<!--        타임리프로 렌더링 하는 경우(th:) @{} 내부의 주소를 사용하게 함(모든 경로를 표기할 때는 @{} 지시어를 사용함, 타임리프로 렌더링하지 않는경우 일반 href를 따라감 -->
+        <img src="/images/logo_sm.png" width="30" height="30">
+<!--        static 디렉토리 내부의 데이터는 스프링부트가 자동으로 띄워줌 -->
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+<!--    뷰가 쪼그라들었을 때 보여주는 햄버거 버튼, 해당 버튼에 data-target(navbarSupportedContent)을 넣어서 리스트로 보여줌 (반응형) -->
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <form th:action="@{/search/study}" class="form-inline" method="get">
+                    <input class="form-control mr-sm-2" name="keyword" type="search" placeholder="스터디 찾기" aria-label="Search" />
+                </form>
+            </li>
+        </ul>
+<!--        검색창(검색 시 /search/study/keyword?"검색어" 형태로 스터디를 찾는다. -->
+<!--        정석으로 따지면 타임리프로 렌더링하지 않는 경우의 action도 넣어줘야 하지만 마땅히 넣어줄 게 없다. -->
+<!--        넣어줘야 한다는 의미는 다른 프론트엔드 개발자가 타임리프를 사용하지않고 렌더링하는 경우를 대비에서 action="#" 등의 아무동작하지 않는 태그를 넣어줘야 한다는 것 -->
+
+        <ul class="navbar-nav justify-content-end">
+            <li class="nav-item">
+                <a class="nav-link" href="#" th:href="@{/login}">로그인</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" th:href="@{/signup}">가입</a>
+            </li>
+<!--            타임리프로 렌더링 안하는 경우 href="#"로 넣어주는데 이 의미는 아무것도 안한다는 의미 (화면을 제일 상단으로 끌어서 보여줌) -->
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="py-5 text-center">
+        <h2>계정 만들기</h2>
+    </div>
+<!--    컨테이너로 해당 폼을 묶어준다. -->
+    <div class="row justify-content-center">
+        <form class="needs-validation col-sm-6" action="#"
+              th:action="@{/sign-up}" th:object="${signUpForm}" method="post" novalidate>
+<!--            위 코드가 실행되려면 signUpForm이 존재해야 함, 그렇지 않을 경우 에러 발생 -->
+<!--            Neither BindingResult nor plain target object for bean name 'signUpForm' available as request attribute -->
+
+<!--            needs validation을 사용하면 html단에서 validation 체킹을 할 수 있음, validation은 아래 javascript function 내용 참고 -->
+<!--            폼 태그를 열어주고 액션으로 /signup을 호출하게 한다. th:object=.. 는 스프링부트에서 제공하는 기능으로
+                signUpForm 오브젝트 객체 생성하고 form 데이터 내부에 nickname, email, pass 등의 인풋값을 변수로 저장한다. nickname, email, pass는 인풋 데이터를 저장하는 변수로
+                signUpForm 객체에 소속된다. -->
+            <div class="form-group">
+                <label for="nickname">닉네임</label>
+                <input id="nickname" type="text" th:field="*{nickname}" class="form-control"
+                       placeholder="nickname" aria-describedby="nicknameHelp" required minlength="3" maxlength="20">
+                <small id="nicknameHelp" class="form-text text-muted">
+                    공백없이 문자와 숫자로만 3자 이상 20자 이내로 입력하세요. 가입후에 변경할 수 있습니다.
+                </small>
+                <small class="invalid-feedback">닉네임을 입력하세요.</small>
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}">Nickname Error</small>
+            </div>
+
+            <div class="form-group">
+                <label for="email">이메일</label>
+                <input id="email" type="email" th:field="*{email}" class="form-control"
+                       placeholder="your@email.com" aria-describedby="emailHelp" required>
+                <small id="emailHelp" class="form-text text-muted">
+                    스터디올래는 사용자의 이메일을 공개하지 않습니다.
+                </small>
+                <small class="invalid-feedback">이메일을 입력하세요.</small>
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</small>
+            </div>
+
+            <div class="form-group">
+                <label for="password">패스워드</label>
+                <input id="password" type="password" th:field="*{password}" class="form-control"
+                       aria-describedby="passwordHelp" required minlength="8" maxlength="50">
+                <small id="passwordHelp" class="form-text text-muted">
+                    8자 이상 50자 이내로 입력하세요. 영문자, 숫자, 특수기호를 사용할 수 있으며 공백은 사용할 수 없습니다.
+                </small>
+                <small class="invalid-feedback">패스워드를 입력하세요.</small>
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</small>
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-primary btn-block" type="submit"
+                        aria-describedby="submitHelp">가입하기</button>
+                <small id="submitHelp" class="form-text text-muted">
+                    <a href="#">약관</a>에 동의하시면 가입하기 버튼을 클릭하세요.
+                </small>
+            </div>
+        </form>
+    </div>
+
+    <footer th:fragment="footer">
+        <div class="row justify-content-center">
+            <img class="mb-2" src="/images/logo_long_kr.png" alt="" width="100">
+            <small class="d-block mb-3 text-muted">&copy; 2021</small>
+        </div>
+    </footer>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+<script type="application/javascript">
+    (function () {
+        'use strict';
+
+        window.addEventListener('load', function () {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // html에서 needs-validation에 해당하는 클래스를 모두 가져와서
+
+            // Loop over them and prevent submission
+            Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    // 서브밋 이벤트 발생할때 해당 폼이 유효한지 검증, 유효하지 않으면 실패, 유요하면 was-validated 성공
+                    // 검증 조건은 needs-validation 클래스 내부의 인풋 태그에 required 내용을 참고하면 됨, 검증이 안될경우 invalied-feedback 내용을 보여줌
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        }, false)
+    }())
+</script>
+
+
+</body>
+</html>
