@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>StudyOlle</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <style>
+        .container {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand" href="/" th:href="@{/}">
+        <!--        타임리프로 렌더링 하는 경우(th:) @{} 내부의 주소를 사용하게 함(모든 경로를 표기할 때는 @{} 지시어를 사용함, 타임리프로 렌더링하지 않는경우 일반 href를 따라감 -->
+        <img src="/images/logo_sm.png" width="30" height="30">
+        <!--        static 디렉토리 내부의 데이터는 스프링부트가 자동으로 띄워줌 -->
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <!--    뷰가 쪼그라들었을 때 보여주는 햄버거 버튼, 해당 버튼에 data-target(navbarSupportedContent)을 넣어서 리스트로 보여줌 (반응형) -->
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <form th:action="@{/search/study}" class="form-inline" method="get">
+                    <input class="form-control mr-sm-2" name="keyword" type="search" placeholder="스터디 찾기" aria-label="Search" />
+                </form>
+            </li>
+        </ul>
+        <!--        검색창(검색 시 /search/study/keyword?"검색어" 형태로 스터디를 찾는다. -->
+        <!--        정석으로 따지면 타임리프로 렌더링하지 않는 경우의 action도 넣어줘야 하지만 마땅히 넣어줄 게 없다. -->
+        <!--        넣어줘야 한다는 의미는 다른 프론트엔드 개발자가 타임리프를 사용하지않고 렌더링하는 경우를 대비에서 action="#" 등의 아무동작하지 않는 태그를 넣어줘야 한다는 것 -->
+
+        <ul class="navbar-nav justify-content-end">
+            <li class="nav-item">
+                <a class="nav-link" href="#" th:href="@{/login}">로그인</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" th:href="@{/signup}">가입</a>
+            </li>
+            <!--            타임리프로 렌더링 안하는 경우 href="#"로 넣어주는데 이 의미는 아무것도 안한다는 의미 (화면을 제일 상단으로 끌어서 보여줌) -->
+        </ul>
+    </div>
+</nav>
+
+    <div class="py-5 text-center" th:if="${error}">
+<!--        p:패딩, y 탑,바텀의 패딩을 5만큼 주겠다. text는 가운데 정렬 한다. -->
+<!--        만약 에러가 존재하면 아래 메세지 출력 -->
+        <p class="lead">이메일 확인</p>
+<!--        lead는 얇은 글자체를 의미 -->
+        <div class="alert alert-danger" role="alert">
+<!--            부트스트랩에서 제공하는 alert 클래스 -->
+            이메일 확인 링크가 정확하지 않습니다.
+        </div>
+    </div>
+
+
+    <div class="py-5 text-center" th:if="${error == null}">
+<!--        에러가 존재하지 않으면 안래 메세지 출력 -->
+        <p class="lead">이메일 확인</p>
+        <h2>
+            이메일을 확인했습니다. <span th:text="${numberOfUser}"></span>번째 회원,
+            <span th:text="${nickname}"></span>님 가입을 축하합니다.
+<!--                span inline 방식의 블록 기법, div는 아웃라인 방식 -->
+<!--            Controller에서 받은 Model 객체 내부에 numberOfUser, nickname 변수 사용 -->
+        </h2>
+        <small class="text-info">이제부터 가입할 때 사용한 이메일 또는 닉네임과 패스워드로 로그인 할 수 있습니다.</small>
+    </div>
+
+
+</body>
+</html>

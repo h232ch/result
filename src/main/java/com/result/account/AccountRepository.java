@@ -10,4 +10,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> { // Acc
 
     boolean existsByNickname(String nickname); // 자동으로 해당 조건에 맞는 메서드 생성
     boolean existsByEmail(String email);
+
+    Account findByEmail(String email);
 }
